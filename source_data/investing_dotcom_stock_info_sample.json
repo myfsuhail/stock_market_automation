@@ -1,0 +1,182 @@
+{
+    "rows": [
+      {
+        "asset": {
+          "hidden": false,
+          "uid": "NSEI:RELIANCE",
+          "pairID": 18367,
+          "ticker": "RELI",
+          "name": "Reliance Industries",
+          "primary": "NSEI:RELIANCE",
+          "path": "/equities/reliance-industries",
+          "logo": "https://cdn.investing.com/entities-logos/878373.svg",
+          "logoDark": "",
+          "sector": "Energy"
+        },
+        "data": [
+          {
+            "hidden": false,
+            "value": "NSE",
+            "raw": "NSE",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "Energy",
+            "raw": "Energy",
+            "sentiment": 0,
+            "path": "/india/energy"
+          },
+          {
+            "hidden": false,
+            "value": "Oil & Gas",
+            "raw": "Oil & Gas",
+            "sentiment": 0,
+            "path": "/india/energy/oil-and-gas"
+          },
+          {
+            "hidden": false,
+            "value": "₹15.64LCr",
+            "raw": 15640000000000,
+            "currency": "INR",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "24.5x",
+            "raw": 24.549999237060547,
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "-28.1",
+            "raw": -28.104534149169922,
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "₹1,231",
+            "raw": 1231,
+            "currency": "INR",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "-1.8%",
+            "raw": -0.017799999564886093,
+            "sentiment": 0
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": false,
+            "value": "29.9%",
+            "raw": 0.29862359166145325,
+            "sentiment": 1
+          },
+          {
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "asset": {
+          "hidden": false,
+          "uid": "NSEI:TCS",
+          "pairID": 18420,
+          "ticker": "TCS",
+          "name": "Tata Consultancy",
+          "primary": "NSEI:TCS",
+          "path": "/equities/tata-consultancy-services",
+          "logo": "",
+          "logoDark": "",
+          "sector": "Technology"
+        },
+        "data": [
+          {
+            "hidden": false,
+            "value": "NSE",
+            "raw": "NSE",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "Technology",
+            "raw": "Technology",
+            "sentiment": 0,
+            "path": "/india/technology"
+          },
+          {
+            "hidden": false,
+            "value": "Software & IT Services",
+            "raw": "Software & IT Services",
+            "sentiment": 0,
+            "path": "/india/technology/software-and-it-services"
+          },
+          {
+            "hidden": false,
+            "value": "₹15.46LCr",
+            "raw": 15460000000000,
+            "currency": "INR",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "32.6x",
+            "raw": 32.630001068115234,
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "4.74",
+            "raw": 4.739712715148926,
+            "sentiment": -1
+          },
+          {
+            "hidden": false,
+            "value": "₹4,267.35",
+            "raw": 4267.35009765625,
+            "currency": "INR",
+            "sentiment": 0
+          },
+          {
+            "hidden": false,
+            "value": "-1.9%",
+            "raw": -0.01850000023841858,
+            "sentiment": 0
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": true
+          },
+          {
+            "hidden": false,
+            "value": "3.9%",
+            "raw": 0.03901926055550575,
+            "sentiment": 0
+          },
+          {
+            "hidden": true
+          }
+        ]
+    }
+]
+}
