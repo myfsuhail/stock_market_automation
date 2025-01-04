@@ -1,8 +1,8 @@
 import pandas as pd
 from bs4 import BeautifulSoup
-from sqlalchemy import create_engine
+import duckdb
 
-def html_to_postgres(html_content, table_name, db_url):
+def html_to_duckdb(html_content, table_name, db_file_path):
     # Parse HTML using BeautifulSoup
     soup = BeautifulSoup(html_content, "html.parser")
 
@@ -31,20 +31,23 @@ def html_to_postgres(html_content, table_name, db_url):
     df = df.drop(columns=['more'])
     df['record_created_on'] = pd.Timestamp.now()
 
-    # Create a SQLAlchemy engine
-    engine = create_engine(db_url)
+    # Connect to DuckDB and load DataFrame
+    conn = duckdb.connect(db_file_path)
 
-    # Load DataFrame into PostgreSQL
-    df.to_sql(table_name, engine, if_exists='replace', index=False)
+    # Write the DataFrame to DuckDB using DuckDB's built-in function
+    conn.execute(f"CREATE OR REPLACE TABLE halal_stocks AS SELECT * FROM df")
 
-    print(f"Data loaded into the '{table_name}' table in PostgreSQL.")
+    # Close the connection
+    conn.close()
+
+    print(f"Data loaded into the '{table_name}' table in DuckDB.")
 
 # Example usage
 if __name__ == "__main__":
     with open("./source_data/halal_stocks.html", "r", encoding="utf-8") as file:
         html_content = file.read()
 
-    database_url = "postgresql://admin:password@postgres_duckdb:5432/buy_sell_buddy"
+    db_file_path = "/app/stock_automate/buy_sell_buddy.duckdb"  # Path to DuckDB database file
     table_name = "halal_stocks"
 
-    html_to_postgres(html_content, table_name, database_url)
+    html_to_duckdb(html_content, table_name, db_file_path)

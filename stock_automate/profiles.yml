@@ -1,0 +1,19 @@
+stock_automate:
+  outputs:
+    dev:
+      type: duckdb
+      path: buy_sell_buddy.duckdb  # Path to the DuckDB file
+      schema: main  # Specify the schema; DuckDB defaults to "main"
+      threads: 4  # Number of threads for parallel operations
+
+    prod:
+      dbname: buy_sell_buddy
+      host: postgres_duckdb
+      pass: password
+      port: 5432
+      schema: public
+      threads: 4
+      type: postgres
+      user: admin
+      
+  target: dev

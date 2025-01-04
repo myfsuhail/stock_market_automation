@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: main  
+    schema: main  
+    tables:
+      - name: assets_info
+      - name: historical_stock_data_daily
+      - name: historical_stock_data_weekly
+      - name: current_stock_data_daily
+      - name: current_stock_data_weekly

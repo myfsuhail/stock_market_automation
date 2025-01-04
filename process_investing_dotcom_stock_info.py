@@ -33,12 +33,12 @@ df = df.rename(columns=rename_headers)
 df['record_created_on'] = pd.Timestamp.now()
 
 # Database connection URL
-database_url = "postgresql://admin:password@postgres:5432/buy_sell_buddy"
+database_url = "postgresql://admin:password@postgres_duckdb:5432/buy_sell_buddy"
 
 # Create a SQLAlchemy engine
 engine = create_engine(database_url)
 
 # Load DataFrame into PostgreSQL
-df.to_sql('assets_info', engine, if_exists='append', index=False)
+df.to_sql('assets_info', engine, if_exists='replace', index=False)
 
 print("Filtered data has been loaded into the 'assets_info' table in PostgreSQL.")

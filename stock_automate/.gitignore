@@ -1,0 +1,7 @@
+
+target/
+dbt_packages/
+logs/
+
+
+buy_sell_buddy.duckdb

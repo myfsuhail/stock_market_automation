@@ -12,19 +12,36 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=buy_sell_buddy
     depends_on:
-      - postgres
+      - postgres_duckdb
 
-  postgres:
-    image: postgres:13
-    restart: always
+#  postgres:
+#    image: postgres:13
+#    restart: always
+#    environment:
+#      POSTGRES_USER: admin
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_DB: buy_sell_buddy
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+
+
+  postgres_duckdb:
+    image: pgduckdb/pgduckdb:16-main
+    ports:
+      - ${PORT:-5432}:5432
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: buy_sell_buddy
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgduckdb_data:/var/lib/postgresql/data
+      - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    restart: always
 
 volumes:
+  pgduckdb_data:
   postgres_data:
