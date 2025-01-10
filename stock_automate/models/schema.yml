@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: main  
-    schema: main  
+    schema: public  
     tables:
       - name: assets_info
       - name: historical_stock_data_daily

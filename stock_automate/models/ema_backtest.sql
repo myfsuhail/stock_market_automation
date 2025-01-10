@@ -2,29 +2,49 @@
     config(materialized='table')
 }}
 
+
+
 with buy_signals as (
-    select *
+    select *,'ema_signal_9_21' as strategy
     from {{ref('ema_crossover')}}
     where ema_signal_9_21 = 'BUY'
+    union all
+    select *,'ema_signal_21_50' as strategy
+    from {{ref('ema_crossover')}}
+    where ema_signal_21_50 = 'BUY'
 ),
 sell_signals as (
-    select *
+    select *,'ema_signal_9_21' as strategy
     from {{ref('ema_crossover')}}
     where ema_signal_9_21 = 'SELL'
+    union all
+    select *,'ema_signal_21_50' as strategy
+    from {{ref('ema_crossover')}}
+    where ema_signal_21_50 = 'SELL'
 ),
 closed_buy_and_sell as (
     select 
         b.pair_id, 
         b.ticker, 
-        b.stock_name, 
+        b.stock_name,
+        b.primary_uid,
+        b.primary_sector,
+        b.secondary_sector,
+        b.market_cap,
+        b.market_cap_category,
         b.transaction_date as buy_date, 
         s.transaction_date as sell_date,
+        b.volume,
         b.last_close as buy_price,
         s.last_close as sell_price,
-        'CLOSED' as status
+        strftime(b.transaction_date,'%Y') as buy_year,
+        strftime(s.transaction_date,'%Y') as sell_year,
+        'CLOSED' as status,
+        b.strategy
     from buy_signals b
     inner join sell_signals s
     on b.pair_id = s.pair_id
+    and b.strategy = s.strategy
     and s.transaction_date > b.transaction_date
     qualify row_number() over(partition by b.pair_id,buy_date order by sell_date)=1
 ),

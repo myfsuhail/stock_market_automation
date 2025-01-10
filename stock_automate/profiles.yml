@@ -7,13 +7,13 @@ stock_automate:
       threads: 4  # Number of threads for parallel operations
 
     prod:
-      dbname: buy_sell_buddy
-      host: postgres_duckdb
-      pass: password
+      dbname: airflow
+      host: postgres
+      pass: airflow
       port: 5432
       schema: public
       threads: 4
       type: postgres
-      user: admin
+      user: airflow
       
-  target: dev
+  target: prod

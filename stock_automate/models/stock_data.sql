@@ -31,8 +31,8 @@ unioned_stock_data as (
 joined_dataset as (
     select 
 	    a.pair_id, 
-		--to_char(a.row_date_timestamp,'YYYYMMDD') as transaction_id,
-		strftime(a.row_date_timestamp, '%Y%m%d') AS transaction_id,
+		to_char(a.row_date_timestamp,'YYYYMMDD') as transaction_id,
+		--strftime(a.row_date_timestamp, '%Y%m%d') AS transaction_id,
 	    a.row_date_timestamp as transaction_date,
 	    replace(a.last_open,',','')::decimal(10,4) as last_open,
 	    replace(a.last_close,',','')::decimal(10,4) as last_close,
@@ -57,8 +57,9 @@ joined_dataset as (
         	WHEN market_cap < 50000000000 THEN 'Micro Cap'
         	ELSE 'Other'
     	END AS market_cap_category,
+		DATE_TRUNC('quarter', a.row_date_timestamp) AS quarter_start,
 	    a.record_created_on,
-		row_number() over (partition by a.pair_id, strftime(a.row_date_timestamp, '%Y%m%d'), a.frequency order by a.record_created_on desc) as row_num 
+		row_number() over (partition by a.pair_id, to_char(a.row_date_timestamp,'YYYYMMDD'), a.frequency order by a.record_created_on desc) as row_num 
     from unioned_stock_data a
     inner join {{ source('main', 'assets_info') }} b
     on a.pair_id = b.pair_id
