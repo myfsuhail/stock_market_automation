@@ -53,8 +53,8 @@ closed_buy_and_sell as (
         b.volume,
         b.last_close as buy_price,
         s.last_close as sell_price,
-        to_char(b.transaction_date,'%Y') as buy_year,
-        to_char(s.transaction_date,'%Y') as sell_year,
+        to_char(b.transaction_date,'YYYY') as buy_year,
+        to_char(s.transaction_date,'YYYY') as sell_year,
         'CLOSED' as status,
         b.strategy,
         row_number() over(partition by b.pair_id,b.transaction_date order by s.transaction_date) as rn

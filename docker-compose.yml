@@ -79,7 +79,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/stock_automate:/opt/airflow//stock_automate
+    - ${AIRFLOW_PROJ_DIR:-.}/stock_automate:/opt/airflow/stock_automate
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -91,12 +91,12 @@ x-airflow-common:
 services:
   postgres:
     image: postgres:13
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
-    ports:
-      - ${PORT:-5432}:5432
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
@@ -289,69 +289,5 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5433
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=buy_sell_buddy
-
-
-  #postgres_duckdb:
-  #  image: pgduckdb/pgduckdb:16-main
-  #  ports:
-  #    - ${PORT:-5433}:5432
-  #  environment:
-  #    POSTGRES_USER: admin
-  #    POSTGRES_PASSWORD: password
-  #    POSTGRES_DB: buy_sell_buddy
-  #  volumes:
-  #    - pgduckdb_data:/var/lib/postgresql/dox
-  #    - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf
-  #    - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-  #  command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-  #  restart: always
-
-  superset:
-    image: apache/superset:latest
-    container_name: superset
-    ports:
-      - "8088:8088"
-    environment:
-      SUPERSET_ENV: development
-      SUPERSET_LOAD_EXAMPLES: "yes"
-      SUPERSET_ADMIN_PASSWORD: "admin"
-      ADMIN_USERNAME: admin
-      ADMIN_FIRSTNAME: Admin
-      ADMIN_LASTNAME: User
-      ADMIN_EMAIL: admin@example.com
-      ADMIN_PASSWORD: admin_password
-    volumes:
-      - ./superset:/app/superset_home
-      - ./superset_config.py:/app/superset_config.py
-    command: >
-      /bin/sh -c "
-      superset fab create-admin \
-          --username admin \
-          --firstname Superset \
-          --lastname Admin \
-          --email admin@superset.com \
-          --password admin && 
-      superset db upgrade &&
-      superset load_examples &&
-      superset init &&
-      superset run -h 0.0.0.0 -p 8088 --with-threads --reload --debugger
-      "
-
 volumes:
   postgres-db-volume:
-  pgduckdb_data:
-  postgres_data:

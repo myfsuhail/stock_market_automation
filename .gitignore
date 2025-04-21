@@ -1,4 +1,2 @@
 logs/
-dags/__pycache__/
-dags/utils/*
-/stock_automate/buy_sell_buddy.duckdb.tmp*
+*__pycache__*

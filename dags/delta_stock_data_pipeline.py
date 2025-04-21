@@ -10,6 +10,10 @@ from utils.fetch_current_stock_data_daily_parallelly import (
     fetch_historical_data,
     load_into_file
 )
+import pendulum
+
+# Set the timezone to IST
+local_tz = pendulum.timezone("Asia/Kolkata")
 
 # DAG definition
 def run_stock_data_pipeline():
@@ -44,7 +48,7 @@ def run_stock_data_pipeline():
 # Create the Airflow DAG
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2025, 1, 9),
+    'start_date': datetime(2025, 1, 9, tzinfo=local_tz),
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
 }
@@ -53,7 +57,7 @@ dag = DAG(
     'delta_stock_data_pipeline',
     default_args=default_args,
     description='A DAG to fetch stock data and store in PostgreSQL and DuckDB',
-    schedule_interval='*/30 * * * *',  # Run every minute
+    schedule_interval='0,30 8-17 * * *',  # Run every minute
     catchup=False,  # Do not backfill missed runs
     max_active_runs=1,  # Only one active run at a time
 )
