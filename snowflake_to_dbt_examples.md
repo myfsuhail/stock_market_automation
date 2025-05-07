@@ -1,4 +1,4 @@
-# Input and Output Examples
+# Example for the Code Converter: Snowflake SQL to DBT Model
 
 This document provides detailed examples of input SQL statements and their corresponding DBT models.
 
@@ -11,6 +11,7 @@ This document provides detailed examples of input SQL statements and their corre
 The following SQL statements are used for creating a staging table, deduplicating records, updating the target table, and creating a post-hook view.
 
 ```sql
+
 -- Step 1: Create a staging table to hold the latest stock records
 CREATE TABLE stocks_staging (LIKE stocks INCLUDING ALL);
 
@@ -90,9 +91,10 @@ WHERE market_cap_category != 'Unknown';
 
 After processing the above SQL statements, the resulting DBT model looks like this:
 
-**Notice:** though the model is made as incremental, unique_key is not provided in the config block. As we said earlier, developer understanding / judgment is needed
+**NOTICE:** The model is created as incremental, **but unique_key is not provided in the config block**. Therefore, developer understanding of the code, and validation is unavoidable.
 
 ```sql
+
 {{ config(
     materialized='incremental',  -- Materialization type
     post_hook="CREATE OR REPLACE VIEW stock_vw AS SELECT * FROM {{ this }} WHERE market_cap_category != 'Unknown';"
@@ -153,7 +155,11 @@ joined_dataset AS (
 SELECT *
 FROM joined_dataset
 WHERE row_num = 1;
+
 ```
+
+
+---
 
 
 ## Example 2: Create DBT Model with & w/o design hints
@@ -243,13 +249,15 @@ SELECT * FROM table3_data
 
 ```
 
+---
+
 ### Input: Approach 2: With design hints as per developer
 
-*Notice the developer hints in the below code snippet. And compare the results to understand how the output is aligned towards the developer's requirement*
+**Notice the developer hints in the below code snippet. And compare the results to understand how the output is aligned towards the developer's requirement**
 
 ```sql
 
-**Please consider below design/hint points during conversion:**
+Please consider below design/hint points during conversion:
 1. Table should be materialized as incremental with unique key as database_name, table_name, evaluation_time
 2. Use FOR Loop and List to iterate table name dont use multiple select statements.
 
@@ -287,6 +295,8 @@ FROM supply_chain.table3;
 
 ### Output
 
+**NOTICE: The Output of the Converter aligns with the design hints provided by the developer.**
+
 ```sql
 
 {{ 
@@ -317,5 +327,5 @@ with aggregated_data as (
 -- Insert into the final table
 select * from aggregated_data
 
-
 ```
+
