@@ -64,4 +64,4 @@ To optimize results and ensure smooth model generation:
 
 ---
 
-Please find the examples: [a link](https://github.com/myfsuhail/stock_market_automation/blob/md_test/snowflake_to_dbt_examples.md)
+Please find the examples: [HERE](https://github.com/myfsuhail/stock_market_automation/blob/md_test/snowflake_to_dbt_examples.md)
