@@ -90,6 +90,8 @@ WHERE market_cap_category != 'Unknown';
 
 After processing the above SQL statements, the resulting DBT model looks like this:
 
+**Notice:** though the model is made as incremental, unique_key is not provided in the config block. As we said earlier, developer understanding / judgment is needed
+
 ```sql
 {{ config(
     materialized='incremental',  -- Materialization type
@@ -151,4 +153,169 @@ joined_dataset AS (
 SELECT *
 FROM joined_dataset
 WHERE row_num = 1;
+```
+
+
+## Example 2: Create DBT Model with & w/o design hints
+
+### Input: Approach 1: Without design hints
+
+The following statements needs to be converted into DBT Model.
+
+```sql
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table1' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table1;
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table2' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table2;
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table3' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table3;
+
+```
+
+### Output:
+
+```sql
+
+{{ config(
+    materialized='table'
+) }}
+
+-- Combine the logic for all tables into a single dbt model
+WITH table1_data AS (
+    SELECT 
+        'supply_chain' AS database_name,
+        'table1' AS table_name,
+        COUNT(*) AS records,
+        SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1,
+        SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2,
+        NOW() AS evaluation_time
+    FROM {{ ref('table1') }}
+),
+table2_data AS (
+    SELECT 
+        'supply_chain' AS database_name,
+        'table2' AS table_name,
+        COUNT(*) AS records,
+        SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1,
+        SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2,
+        NOW() AS evaluation_time
+    FROM {{ ref('table2') }}
+),
+table3_data AS (
+    SELECT 
+        'supply_chain' AS database_name,
+        'table3' AS table_name,
+        COUNT(*) AS records,
+        SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1,
+        SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2,
+        NOW() AS evaluation_time
+    FROM {{ ref('table3') }}
+)
+
+-- Union all the data together
+SELECT * FROM table1_data
+UNION ALL
+SELECT * FROM table2_data
+UNION ALL
+SELECT * FROM table3_data
+
+
+```
+
+### Input: Approach 2: With design hints as per developer
+
+*Notice the developer hints in the below code snippet. And compare the results to understand how the output is aligned towards the developer's requirement*
+
+```sql
+
+**Please consider below design/hint points during conversion:**
+1. Table should be materialized as incremental with unique key as database_name, table_name, evaluation_time
+2. Use FOR Loop and List to iterate table name dont use multiple select statements.
+
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table1' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table1;
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table2' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table2;
+
+INSERT INTO supply_chain.tables_analytics
+SELECT 'supply_chain' AS database_name
+    , 'table3' AS table_name
+    , COUNT(*) AS records
+    , SUM(CASE WHEN source_desc = 'TC1' THEN 1 ELSE 0 END) AS tc1
+    , SUM(CASE WHEN source_desc = 'TC2' THEN 1 ELSE 0 END) AS tc2
+    , NOW() AS evaluation_time	
+FROM supply_chain.table3;
+
+
+```
+
+
+### Output
+
+```sql
+
+{{ 
+    config(
+        materialized='incremental',
+        unique_key=['database_name', 'table_name', 'evaluation_time']
+    ) 
+}}
+
+-- List of tables to iterate over
+{% set tables = ['table1', 'table2', 'table3'] %}
+
+-- Union all the results for each table
+with aggregated_data as (
+    {% for table in tables %}
+    select 
+        'supply_chain' as database_name,
+        '{{ table }}' as table_name,
+        count(*) as records,
+        sum(case when source_desc = 'TC1' then 1 else 0 end) as tc1,
+        sum(case when source_desc = 'TC2' then 1 else 0 end) as tc2,
+        now() as evaluation_time
+    from {{ ref(table) }}
+    {% if not loop.last %} union all {% endif %}
+    {% endfor %}
+)
+
+-- Insert into the final table
+select * from aggregated_data
+
+
 ```
