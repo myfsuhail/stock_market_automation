@@ -1,4 +1,4 @@
-# Snowflake SQL to dbt Model Converter
+# Snowflake SQL to DBT Model Using LLM Converter
 
 ## Overview
 The **Snowflake SQL to dbt Model Converter** simplifies the migration from Snowflake SQL to dbt (data build tool) by leveraging the power of **Large Language Models (LLMs)**. Instead of manually rewriting SQL scripts into dbt models, the tool automates this process, transforming Snowflake SQL statements into dbt-compatible SQL quickly and efficiently.
