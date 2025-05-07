@@ -5,7 +5,7 @@ The **Snowflake SQL to dbt Model Converter** simplifies the migration from Snowf
 
 Whether you have a single SQL query or a set of related SQL statements, the converter generates a **clean, structured dbt model** that adheres to dbt best practices. Additionally, the tool gives developers the ability to provide **design hints** (e.g., materialization type, partitioning logic, primary keys) to guide the model creation process and ensure optimal performance.
 
-----
+---
 
 ## Problem Statement
 Migrating Snowflake SQL workloads to dbt is a time-consuming and error-prone task. Manual conversion requires significant development effort to:
@@ -48,20 +48,18 @@ Developers can utilize **design hints** to guide the behavior and structure of t
 
 ## Limitations
 While the converter reduces manual effort, it has some limitations:
-1. **Token Limit**: Inputs exceeding 10,000 tokens—or approximately 15,000 characters—may result in incomplete or failed outputs. Developers are encouraged to break large SQL scripts into smaller pieces before using the tool.
-2. **Input Relevance**: The tool works best when SQL statements are logically connected. Including loosely related or unrelated SQL in a batch may confuse the model and generate inaccurate results.
-3. **Developer Judgment Needed**: The tool requires developers to make key design decisions, such as selecting the materialization type or identifying primary keys for deduplication. Providing these as hints ensures higher-quality outputs.
+1. **Token Limit**: Inputs exceeding 10,000 tokens or approximately more than 15,000 characters—may result in incomplete or failed outputs. Developers are encouraged to break large SQL scripts into concise SQLs (or) smaller pieces before using the tool.
+2. **Input Relevance**: The tool works best when SQL statements are logically connected. Including loosely related or unrelated SQL in a batch can generate inaccurate results.
+3. **Developer Judgement Needed**: The tool requires developers to make key design decisions, such as selecting the materialization type or identifying primary keys for deduplication. Providing these as hints ensures higher-quality outputs.
 
 ---
 
 ## Best Practices
 To optimize results and ensure smooth model generation:
 1. **Group Logically Connected SQL**: Include related SQL statements that are intended to form part of the same dbt model. Avoid mixing unrelated queries in one batch.
-2. **Provide Concise Inputs**: Simplify and clean the SQL to reduce complexity and stay within token limits.
+2. **Provide Concise Inputs**: Simplify and clean the SQL to reduce complexity and stay within limits for accurate results.
 3. **Use Design Hints**: Explicitly specify key elements such as materialization type, primary keys, and dependencies to guide the LLM.
 4. **Modularize Complex Logic**: For complex workflows, break down transformations into smaller, manageable models. These can later be joined or referenced within dbt.
 5. **Review and Test**: Always review the generated models for correctness and performance before integration into production environments.
 
 ---
-
-*Feel free to contribute or submit feedback to improve the Snowflake SQL to dbt Model Converter tool!*
