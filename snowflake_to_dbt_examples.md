@@ -84,7 +84,13 @@ SELECT *
 FROM stocks 
 WHERE market_cap_category != 'Unknown';
 
+```
 
+### Output
+
+After processing the above SQL statements, the resulting DBT model looks like this:
+
+```sql
 {{ config(
     materialized='incremental',  -- Materialization type
     post_hook="CREATE OR REPLACE VIEW stock_vw AS SELECT * FROM {{ this }} WHERE market_cap_category != 'Unknown';"
@@ -145,3 +151,4 @@ joined_dataset AS (
 SELECT *
 FROM joined_dataset
 WHERE row_num = 1;
+```
