@@ -2,7 +2,7 @@
 
 This document provides detailed examples of input SQL statements and their corresponding DBT models.
 
-----
+---
 
 ## Example 1: Create DBT Model by Passing SQL Statements
 
@@ -163,7 +163,8 @@ WHERE row_num = 1;
 
 ## Example 2: Create DBT Model with & w/o design hints
 
-### Input: Approach 1: Without design hints
+### Approach 1: Without design hints
+### Input
 
 The following statements needs to be converted into DBT Model.
 
@@ -250,7 +251,8 @@ SELECT * FROM table3_data
 
 ---
 
-### Input: Approach 2: With design hints as per developer
+### Approach 2: With design hints as per developer
+### Input
 
 **Notice the developer hints in the below code snippet. And compare the results to understand how the output is aligned towards the developer's requirement**
 
@@ -328,3 +330,4 @@ select * from aggregated_data
 
 ```
 
+---
