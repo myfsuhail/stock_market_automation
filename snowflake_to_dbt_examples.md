@@ -2,7 +2,7 @@
 
 This document provides detailed examples of input SQL statements and their corresponding DBT models.
 
----
+----
 
 ## Example 1: Create DBT Model by Passing SQL Statements
 
@@ -91,7 +91,7 @@ WHERE market_cap_category != 'Unknown';
 
 After processing the above SQL statements, the resulting DBT model looks like this:
 
-**NOTICE:** The model is created as incremental, **but unique_key is not provided in the config block**. Therefore, developer understanding of the code, and validation is unavoidable.
+**Notice:** The model is created as incremental, **but unique_key is not provided in the config block**. Therefore, developer understanding of the code, and validation is unavoidable.
 
 ```sql
 
@@ -157,7 +157,6 @@ FROM joined_dataset
 WHERE row_num = 1;
 
 ```
-
 
 ---
 
@@ -295,7 +294,7 @@ FROM supply_chain.table3;
 
 ### Output
 
-**NOTICE: The Output of the Converter aligns with the design hints provided by the developer.**
+**Notice: The Output of the Converter aligns with the design hints provided by the developer.**
 
 ```sql
 
