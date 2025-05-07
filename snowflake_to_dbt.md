@@ -63,3 +63,5 @@ To optimize results and ensure smooth model generation:
 5. **Review and Test**: Always review the generated models for correctness and performance before integration into production environments.
 
 ---
+
+Please find the examples: [a link](https://github.com/myfsuhail/stock_market_automation/blob/md_test/snowflake_to_dbt_examples.md)
