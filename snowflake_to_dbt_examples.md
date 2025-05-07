@@ -83,3 +83,65 @@ CREATE OR REPLACE VIEW stock_vw AS
 SELECT * 
 FROM stocks 
 WHERE market_cap_category != 'Unknown';
+
+
+{{ config(
+    materialized='incremental',  -- Materialization type
+    post_hook="CREATE OR REPLACE VIEW stock_vw AS SELECT * FROM {{ this }} WHERE market_cap_category != 'Unknown';"
+) }}
+
+-- Incremental model to process stock data
+WITH
+-- Step 1: Union historical and current stock data
+unioned_stock_data AS (
+    SELECT *
+    FROM {{ ref('historical_stock_data_daily') }}
+    WHERE record_created_on > (SELECT COALESCE(MAX(record_created_on), TIMESTAMP '1900-01-01') FROM {{ this }})
+
+    UNION ALL
+
+    SELECT *
+    FROM {{ ref('current_stock_data_daily') }}
+    WHERE record_created_on > (SELECT COALESCE(MAX(record_created_on), TIMESTAMP '1900-01-01') FROM {{ this }})
+),
+
+-- Step 2: Join with asset information and deduplicate
+joined_dataset AS (
+    SELECT 
+        a.pair_id, 
+        TO_CHAR(a.row_date_timestamp, 'YYYYMMDD') AS transaction_id,
+        a.row_date_timestamp AS transaction_date,
+        REPLACE(a.last_open, ',', '')::DECIMAL(10,4) AS last_open,
+        REPLACE(a.last_close, ',', '')::DECIMAL(10,4) AS last_close,
+        REPLACE(a.last_min, ',', '')::DECIMAL(10,4) AS last_min,
+        REPLACE(a.last_max, ',', '')::DECIMAL(10,4) AS last_max,
+        a.volume_raw::BIGINT AS volume,
+        a.change_percent_raw AS change_percent,
+        b.uid,
+        b.primary_uid,
+        b.ticker,
+        b.stock_name,
+        b.sector,
+        b.primary_sector,
+        b.secondary_sector,
+        b.market_cap,
+        CASE
+            WHEN b.market_cap IS NULL THEN 'Unknown'
+            WHEN b.market_cap > 2000000000000 THEN 'Large Cap'
+            WHEN b.market_cap BETWEEN 500000000000 AND 2000000000000 THEN 'Mid Cap'
+            WHEN b.market_cap BETWEEN 50000000000 AND 500000000000 THEN 'Small Cap'
+            WHEN b.market_cap < 50000000000 THEN 'Micro Cap'
+            ELSE 'Other'
+        END AS market_cap_category,
+        DATE_TRUNC('quarter', a.row_date_timestamp) AS quarter_start,
+        a.record_created_on,
+        ROW_NUMBER() OVER (PARTITION BY a.pair_id, TO_CHAR(a.row_date_timestamp, 'YYYYMMDD') ORDER BY a.record_created_on DESC) AS row_num 
+    FROM unioned_stock_data a
+    INNER JOIN {{ ref('assets_info') }} b
+    ON a.pair_id = b.pair_id
+)
+
+-- Step 3: Final selection of deduplicated records
+SELECT *
+FROM joined_dataset
+WHERE row_num = 1;
